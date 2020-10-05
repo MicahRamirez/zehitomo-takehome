@@ -1,0 +1,30 @@
+{
+  "name": "nextjs-with-typescript",
+  "version": "4.0.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "latest",
+    "clsx": "latest",
+    "dotenv": "^8.2.0",
+    "mongodb": "^3.6.2",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "swr": "^0.3.5",
+    "unfetch": "^4.2.0"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
+  },
+  "devDependencies": {
+    "@types/mongodb": "^3.5.27",
+    "@types/next": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest"
+  }
+}
