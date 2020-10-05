@@ -1,26 +1,77 @@
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
-import useSWR from "swr";
-import fetch from "unfetch";
-import { useDebounce, useDebouncedCallback } from "use-debounce";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import axios from "axios";
+
+import useSWR, { mutate } from "swr";
+import unfetch from "unfetch";
+import { useDebouncedCallback } from "use-debounce";
 
 import Skeleton from "@material-ui/lab/Skeleton";
 import Grid from "@material-ui/core/Grid";
 
 import { Photo } from "../utils/types";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url: string) => unfetch(url).then((r) => r.json());
+
+const PhotoItem: React.FC<Photo> = ({ id, photoUrls, downloadURL }) => {
+  const [isMousedOver, setIsMousedOver] = useState(false);
+  return (
+    <div style={{ width: "100%", height: "100%" }}>
+      {isMousedOver && (
+        <a
+          onClick={async (e) => {
+            e.preventDefault();
+
+            await fetch("/api/downloadImage", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ imageURL: downloadURL, photoId: id }),
+            })
+              .then((response) => {
+                return response.blob();
+              })
+              .then((blob) => {
+                console.log(blob);
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", "testimg.jpeg");
+                document.body.appendChild(link);
+                link.click();
+              });
+          }}
+        >
+          Download
+        </a>
+      )}
+      <img
+        onMouseOver={(e) => setIsMousedOver(true)}
+        key={id}
+        style={{ width: "100%", height: "100%" }}
+        src={photoUrls.small}
+      />
+    </div>
+  );
+};
 
 const PhotoDisplay: React.FC<{ photoData: Photo[] }> = ({ photoData }) => {
-  return <div>{JSON.stringify(photoData)}</div>;
+  return (
+    <PhotoDisplayGrid>
+      {photoData.map((photo) => {
+        return <PhotoItem key={photo.id} {...photo} />;
+      })}
+    </PhotoDisplayGrid>
+  );
 };
 
 const PhotoDisplaySkeleton = () => {
   const skellieChildren = [];
-  for (let i = 0; i < 16; i++) {
-    skellieChildren.push(<Skeleton key={i} width={200} height={200} />);
+  for (let i = 0; i < 9; i++) {
+    skellieChildren.push(<Skeleton style={{ height: "400px" }} key={i} />);
   }
   return <PhotoDisplayGrid>{skellieChildren}</PhotoDisplayGrid>;
 };
@@ -39,6 +90,7 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
             container
             item
             xs={12}
+            spacing={2}
           >
             {currentRow}
           </Grid>
@@ -54,7 +106,7 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
     return formattedChildren;
   };
   return (
-    <Grid container>
+    <Grid container spacing={2}>
       {Array.isArray(children) && makeColumnsAndRows(children)}
     </Grid>
   );
@@ -62,11 +114,26 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
 
 const DEBOUNCE_INTERVAL = 1500;
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    stickySearch: {
+      position: "fixed",
+      top: 0,
+      marginTop: "20px",
+    },
+    photoContainer: {
+      marginTop: "90px",
+    },
+  })
+);
+
 export default function Index() {
+  const classes = useStyles();
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchDebounced, setSearchDebounced] = useState("");
   const debounced = useDebouncedCallback((value: string) => {
+    debugger;
     setSearchDebounced(value);
   }, DEBOUNCE_INTERVAL);
   const { data } = useSWR(
@@ -79,20 +146,28 @@ export default function Index() {
   console.log("search", search, "searchDebounced", searchDebounced);
   console.log("isSearching", isSearching);
   return (
-    <Container>
-      <Box my={4}>
-        <TextField
-          label={"search"}
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setIsSearching(true);
-            debounced.callback(e.target.value);
-          }}
-        />
-      </Box>
-      {data && !isSearching && <PhotoDisplay photoData={data as Photo[]} />}
-      {isSearching && <PhotoDisplaySkeleton />}
-    </Container>
+    <>
+      <Grid className={classes.stickySearch} container justify="center">
+        <Grid item xs={8}>
+          <TextField
+            label={"Search photos"}
+            fullWidth
+            value={search}
+            placeholder={"Type to get started!"}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setIsSearching(true);
+              debounced.callback(e.target.value);
+            }}
+          />
+        </Grid>
+      </Grid>
+      <Container className={classes.photoContainer}>
+        {data && !isSearching && (
+          <PhotoDisplay photoData={data.data as Photo[]} />
+        )}
+        {isSearching && <PhotoDisplaySkeleton />}
+      </Container>
+    </>
   );
 }
