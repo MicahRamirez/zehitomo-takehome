@@ -1,4 +1,4 @@
-import { connectToDatabase } from "../utils/mongodb";
+import { connectToDatabase } from "../../utils/mongodb";
 
 interface GetListsResponse {}
 
@@ -11,12 +11,17 @@ export const getLists = async (): Promise<GetListsResponse> => {
   return docs;
 };
 
-// interface CreateListParams {}
+interface CreateListParams {
+  pictureId: string;
+  title: string;
+  description: string;
+}
 
-// interface CreateListResponse {
-
-// }
-
-// export const createList = async ({pictureId, title, description}: CreateListParams) => {
-
-// }
+export const createList = async ({
+  pictureId,
+  title,
+  description,
+}: CreateListParams) => {
+  console.log(pictureId, title, description);
+  return [];
+};

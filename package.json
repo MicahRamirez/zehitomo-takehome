@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "latest",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "clsx": "latest",
     "dotenv": "^8.2.0",
     "mongodb": "^3.6.2",
@@ -11,7 +12,9 @@
     "react": "latest",
     "react-dom": "latest",
     "swr": "^0.3.5",
-    "unfetch": "^4.2.0"
+    "unfetch": "^4.2.0",
+    "unsplash-js": "^6.3.0",
+    "use-debounce": "^5.0.1"
   },
   "scripts": {
     "dev": "next",
@@ -25,6 +28,7 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/unsplash-js": "^6.3.1",
     "typescript": "latest"
   }
 }
