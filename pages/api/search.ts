@@ -35,28 +35,37 @@ const transformSearchResultsToPhotoList = (
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
   // requests are limited to 50 per hour, need a way to work with the data without killing my budget;
   if (req.method === "GET" && UNSPLASH_IS_MOCK) {
-    console.log("mocking");
-    console.log(req.query);
     return res
       .status(200)
       .json({ data: transformSearchResultsToPhotoList(searchMock.data) });
-  } else if (req.method === "POST") {
+  } else if (req.method === "GET") {
     const unsplash = new Unsplash({ accessKey: UNSPLASH_ACCESS_KEY });
-    unsplash.search
-      .photos(req.body.searchString, 1, 10, {
-        orientation: "squarish" as any,
-      })
-      .then(toJson)
-      .then((json) => {
-        console.log("result", json);
-        return res
-          .status(200)
-          .json({ data: transformSearchResultsToPhotoList(json.data) });
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.status(400).json({ error: true });
-      });
+    let { keyword, page } = req.query;
+    let pageNumber;
+    if (!page) {
+      pageNumber = 1;
+    } else if (typeof page === "string") {
+      pageNumber = parseInt(page);
+    }
+    if (Array.isArray(keyword)) {
+      console.log("isError");
+    } else {
+      unsplash.search
+        .photos(keyword, pageNumber, 30, {
+          orientation: "squarish" as any,
+        })
+        .then(toJson)
+        .then((json) => {
+          console.log("result", json);
+          return res
+            .status(200)
+            .json({ data: transformSearchResultsToPhotoList(json) });
+        })
+        .catch((err) => {
+          console.log(err);
+          return res.status(400).json({ error: true });
+        });
+    }
   } else {
     res.status(405).send("not supported");
   }
