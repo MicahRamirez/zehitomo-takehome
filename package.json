@@ -9,6 +9,8 @@
     "axios": "^0.20.0",
     "clsx": "latest",
     "dotenv": "^8.2.0",
+    "formik": "^2.1.7",
+    "formik-material-ui": "^3.0.0",
     "mongodb": "^3.6.2",
     "next": "latest",
     "react": "latest",
@@ -16,7 +18,8 @@
     "swr": "^0.3.5",
     "unfetch": "^4.2.0",
     "unsplash-js": "^6.3.0",
-    "use-debounce": "^5.0.1"
+    "use-debounce": "^5.0.1",
+    "yup": "^0.29.3"
   },
   "scripts": {
     "dev": "next",
@@ -31,6 +34,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/unsplash-js": "^6.3.1",
+    "@types/yup": "^0.29.7",
     "typescript": "latest"
   }
 }

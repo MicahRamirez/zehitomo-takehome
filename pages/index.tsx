@@ -8,7 +8,7 @@ import unfetch from "unfetch";
 import { useDebouncedCallback } from "use-debounce";
 
 import { Photo } from "../utils/types";
-import { PhotoDisplay } from "../src/PhotoDisplay";
+import { PhotoSearchResultsGrid } from "../src/PhotoSearchResultsGrid";
 
 const fetcher = (url: string) => unfetch(url).then((r) => r.json());
 
@@ -32,7 +32,7 @@ export default function Index() {
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchDebounced, setSearchDebounced] = useState("");
-  const [searchResults, setSearchResults] = useState<Photo[]>();
+  const [searchResults, setSearchResults] = useState<Photo[]>([]);
   const debounced = useDebouncedCallback((value: string) => {
     setSearchDebounced(value);
   }, DEBOUNCE_INTERVAL);
@@ -67,7 +67,10 @@ export default function Index() {
         </Grid>
       </Grid>
       <Container className={classes.photoContainer}>
-        <PhotoDisplay showSkeleton={isSearching} photoData={searchResults} />
+        <PhotoSearchResultsGrid
+          showSkeleton={isSearching}
+          photoData={searchResults}
+        />
       </Container>
     </>
   );

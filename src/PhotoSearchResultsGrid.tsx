@@ -1,5 +1,6 @@
 import React from "react";
 import Skeleton from "@material-ui/lab/Skeleton";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 
 import { PhotoItem } from "./PhotoItem";
@@ -7,7 +8,17 @@ import { Photo } from "../utils/types";
 
 const LOADING_SKELETON_COUNT = 12;
 
-export const PhotoDisplay: React.FC<{
+// required for forcing skeletons to have height that could mimic the eventual size of a photo.
+const useStyles = makeStyles(() =>
+  createStyles({
+    gridRow: {
+      minHeight: "250px",
+    },
+  })
+);
+
+// renders skeletons when there is a pending search along with any photos that exist
+export const PhotoSearchResultsGrid: React.FC<{
   photoData: Photo[];
   showSkeleton: boolean;
 }> = ({ photoData, showSkeleton }) => {
@@ -31,9 +42,13 @@ export const PhotoDisplay: React.FC<{
   return <PhotoDisplayGrid>{photoDisplayChildren()}</PhotoDisplayGrid>;
 };
 
+// responsible for putting some number of children elements into a grid with 4 elements in each row.
 const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const classes = useStyles();
+  // given some amount of children(pictures and or skeletons) create a grid where each row has 4 elements.
+  // TODO: probably a better way to do this
   const makeColumnsAndRows = (children: React.ReactNode[]) => {
     const formattedChildren = [];
     let currentRow: React.ReactNode[] = [];
@@ -47,7 +62,7 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
             item
             xs={12}
             spacing={2}
-            style={{ minHeight: "250px" }}
+            className={classes.gridRow}
           >
             {currentRow}
           </Grid>
@@ -69,7 +84,7 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
           item
           xs={12}
           spacing={2}
-          style={{ minHeight: "250px" }}
+          className={classes.gridRow}
         >
           {currentRow}
         </Grid>
