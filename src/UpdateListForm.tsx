@@ -1,5 +1,6 @@
 import React from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Field } from "formik";
+import { mutate } from "swr";
 import { TextField } from "formik-material-ui";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -27,7 +28,8 @@ export const UpdateListForm: React.FC<{
   id: List["id"];
   title: List["title"];
   description: List["description"];
-}> = ({ id, title, description }) => {
+  photos: List["photos"];
+}> = ({ id, title, description, photos }) => {
   const existingLists = getListTitlesFromLocalStorage();
   const classes = useStyles();
   return (
@@ -37,7 +39,7 @@ export const UpdateListForm: React.FC<{
         description: description,
       }}
       validationSchema={Yup.object({
-        listTitle: Yup.string()
+        title: Yup.string()
           .max(
             ARBITRARY_TITLE_LENGTH,
             `List title must be ${ARBITRARY_TITLE_LENGTH} characters or less`
@@ -48,24 +50,25 @@ export const UpdateListForm: React.FC<{
             }
             return (
               existingLists.reduce<number>((acc, arrVal) => {
-                if (arrVal === value) {
+                if (arrVal.title === value && arrVal.id !== id) {
                   return acc + 1;
                 }
                 return acc;
-              }, 0) < 2
+              }, 0) < 1
             );
           })
           .trim()
           .required("Required"),
-        listDescription: Yup.string().max(
+        description: Yup.string().max(
           ARBITRARY_DESCRIPTION_LENGTH,
           `List description must be ${ARBITRARY_DESCRIPTION_LENGTH} characters or less`
         ),
       })}
       onSubmit={async (values) => {
+        let apiURI = `/api/list/${id}`;
         let response;
         try {
-          response = await axios.patch(`/api/list/${id}`, {
+          response = await axios.patch(apiURI, {
             title: values.title,
             description: values.description,
           });
@@ -73,8 +76,14 @@ export const UpdateListForm: React.FC<{
           console.warn("Unable to update list");
         }
         if (response && response.data) {
+          mutate(apiURI, {
+            id,
+            title: values.title,
+            description: values.description,
+            photos,
+          });
           setListInLocalStorage({
-            id: response.data.id,
+            id: id,
             title: values.title,
             description: values.description,
           });

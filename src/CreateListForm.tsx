@@ -39,7 +39,6 @@ export const CreateListForm: React.FC<{
 }> = ({ photoId, photoUrls, onClose }) => {
   const classes = useStyles();
   const existingLists = getListTitlesFromLocalStorage();
-  console.log(existingLists);
   return (
     <Formik
       initialValues={{
@@ -58,7 +57,9 @@ export const CreateListForm: React.FC<{
             }
             // when creating lists the listTitle should not already exist
             // the BE should be responsible for preventing dupes but running low on time
-            return existingLists.findIndex((arrVal) => arrVal === value) === -1;
+            return (
+              existingLists.findIndex((arrVal) => arrVal.title === value) === -1
+            );
           })
           .trim()
           .required("Required"),

@@ -9,14 +9,8 @@ const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY
   : "";
 
 const UNSPLASH_IS_MOCK = process.env.UNSPLASH_IS_MOCK === "true" ? true : false;
-console.log(UNSPLASH_IS_MOCK);
 
-/**
- * Maps properties from unsplash API /search to a structure that more simply fullfills frontend requirements
- *
- * @param rawSearchResults results from unsplash API
- * @returns {Photo[]} A simplified version of the photo data model specific to frontend requirements
- */
+// Maps properties from unsplash API /search to a structure that more simply fullfills frontend requirements
 const transformSearchResultsToPhotoList = (
   rawSearchResults: RawSearch
 ): Photo[] => {
@@ -33,7 +27,7 @@ const transformSearchResultsToPhotoList = (
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
-  // requests are limited to 50 per hour, need a way to work with the data without killing the budget;
+  // requests are limited to 50 per hour, need a way to work with the data without killing the budget
   if (req.method === "GET" && UNSPLASH_IS_MOCK) {
     return res
       .status(200)
@@ -54,16 +48,14 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
         })
         .then(toJson)
         .then((json) => {
-          return res
-            .status(200)
-            .json({
-              data: transformSearchResultsToPhotoList(json),
-              total: json.total,
-              totalPages: json.total_pages,
-            });
+          return res.status(200).json({
+            data: transformSearchResultsToPhotoList(json),
+            total: json.total,
+            totalPages: json.total_pages,
+          });
         })
         .catch((err) => {
-          console.log(err);
+          console.error("there was an error calling unsplash", err);
           return res.status(400).json({ error: true });
         });
     }

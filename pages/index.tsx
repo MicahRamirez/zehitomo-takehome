@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import Grid from "@material-ui/core/Grid";
 import useSWR from "swr";
 import { useDebouncedCallback } from "use-debounce";
 
 import { Photo } from "../utils/types";
 import { PhotoSearchResultsGrid } from "../src/PhotoSearchResultsGrid";
 import { StickyHeader } from "../src/StickyHeader";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 const DEBOUNCE_INTERVAL = 1500;
 
@@ -23,12 +21,14 @@ export default function Index() {
   const [searchResults, setSearchResults] = useState<Photo[]>([]);
   const debounced = useDebouncedCallback((value: string) => {
     setSearchDebounced(value);
+    if (value.length === 0) {
+      setIsSearching(false);
+    }
   }, DEBOUNCE_INTERVAL);
   useSWR<{ data: Photo[] }>(
     searchDebounced.length > 0
       ? `/api/search?keyword=${searchDebounced}`
       : null,
-    fetcher,
     {
       onSuccess: (data) => {
         setSearchResults(data.data);

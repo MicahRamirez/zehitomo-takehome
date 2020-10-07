@@ -57,7 +57,6 @@ export const PhotoActions: React.FC<{
           return response.blob();
         })
         .then((blob) => {
-          console.log(blob);
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.href = url;
@@ -68,7 +67,7 @@ export const PhotoActions: React.FC<{
           setDownloadingImage(false);
         })
         .catch((error) => {
-          console.log("there was an error");
+          console.error("there was an error", error);
         });
     }
   };

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import mongodb from "mongodb";
 
 import { connectToDatabase } from "../../../utils/mongodb";
-import { List, ListPATCHBody } from "../../../utils/types";
+import { ListPATCHBody } from "../../../utils/types";
 
 const isListPATCHBody = (x: any): x is ListPATCHBody => {
   return (
@@ -28,32 +28,32 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ success: false, errorMessage: "Id must a string" });
       }
 
-      // Update full list document or create new document in database
       const result = await getListById(id);
       return res.status(200).json(result);
     }
     case "PATCH": {
       if (!isListPATCHBody(body) || Array.isArray(id)) {
-        console.log(isListPATCHBody(body));
-        console.log(Array.isArray(id));
         return res.status(400).json({ success: false });
       }
       await updateListById(body, id);
       return res.status(200).json({ success: true });
     }
     default:
-      res.setHeader("Allow", ["GET"]);
+      res.setHeader("Allow", ["GET", "PATCH"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 };
 
+// get the list by id
 export const getListById = async (id: string) => {
   const { db } = await connectToDatabase();
   const filter = { _id: new mongodb.ObjectID(id) };
-  const result = await db.collection<List>("list").findOne(filter);
-  return result;
+  const result = await db.collection("list").findOne(filter);
+  return { ...result, id: result._id };
 };
 
+// updates a list title or description property. Can add a new photo to a list
+// if the photo to add's id is not already in the list
 export const updateListById = async (
   listPATCHBody: ListPATCHBody,
   id: string

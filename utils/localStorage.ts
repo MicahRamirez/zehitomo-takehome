@@ -34,6 +34,6 @@ export const setListInLocalStorage = ({
 export const getListTitlesFromLocalStorage = () => {
   const lists = getListObjectFromLocalStorage();
   return Object.entries(lists).map(([, v]) => {
-    return v.title;
+    return { title: v.title, id: v.id };
   });
 };

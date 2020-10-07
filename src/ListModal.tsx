@@ -6,6 +6,7 @@ import Divider from "@material-ui/core/Divider";
 import Container from "@material-ui/core/Container";
 
 import { Photo } from "../utils/types";
+import { getListTitlesFromLocalStorage } from "../utils/localStorage";
 import { CreateListForm } from "./CreateListForm";
 import { QuickListAddForm } from "./QuickListAddForm";
 
@@ -35,6 +36,8 @@ export const ListModal: React.FC<{
   photoId: Photo["id"];
 }> = ({ open, onClose, photoUrls, photoId }) => {
   const classes = useStyles();
+  const existingLists = getListTitlesFromLocalStorage();
+
   return (
     <Modal open={open} onClose={onClose} className={classes.modal}>
       <Container maxWidth={"sm"} disableGutters>
@@ -44,11 +47,13 @@ export const ListModal: React.FC<{
           </div>
 
           <Divider />
-          <QuickListAddForm
-            photoId={photoId}
-            photoUrls={photoUrls}
-            onClose={onClose}
-          />
+          {existingLists.length > 0 && (
+            <QuickListAddForm
+              photoId={photoId}
+              photoUrls={photoUrls}
+              onClose={onClose}
+            />
+          )}
           <Divider />
           <CreateListForm
             photoUrls={photoUrls}

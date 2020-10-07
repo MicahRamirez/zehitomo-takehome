@@ -37,8 +37,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(201).json(result);
     }
     case "POST": {
-      // send an array of ids that were saved in local storage on the client
-      // get the full documents for each
       if (!isListPOSTBody(body)) {
         return res.status(400).json({ success: false });
       }
@@ -51,6 +49,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
+// initial plan was to make a batch request with all listIds, scratched that as it was
+// simpler to build the components the fetched their own respective list by id
 export const getListByIds = async (listIds: string[]) => {
   const { db } = await connectToDatabase();
   const cursor = db.collection<List>("list").find({
