@@ -59,7 +59,7 @@ export const PhotoItem: React.FC<
       />
       <img
         key={id}
-        src={`${photoUrls.regular}&w=200&h=200`}
+        src={`${photoUrls.regular}&w=400&h=400`}
         className={classes.imageTag}
       />
       {associatedUsername !== undefined &&

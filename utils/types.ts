@@ -56,7 +56,6 @@ export interface ListPOSTBody {
 }
 
 export interface ListPATCHBody {
-  id: string;
   title?: List["title"];
   description?: List["description"];
   photos?: List["photos"];

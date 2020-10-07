@@ -10,13 +10,14 @@ import GridListTile from "@material-ui/core/GridListTile";
 import Grid from "@material-ui/core/Grid";
 import useSwr from "swr";
 
-import { StickyHeader } from "./index";
+import { StickyHeader } from "../src/StickyHeader";
 import {
   getListObjectFromLocalStorage,
   ListPartial,
 } from "../utils/localStorage";
 import { List } from "../utils/types";
 import { PhotoItem } from "../src/PhotoItem";
+import { UpdateListForm } from "../src/UpdateListForm";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,27 +27,67 @@ const useStyles = makeStyles((theme: Theme) =>
     search: {
       marginRight: theme.spacing(3),
     },
+    listContainer: {
+      padding: theme.spacing(3),
+    },
+  })
+);
+
+const usePhotoListStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    photoListFormPadding: {
+      padding: theme.spacing(4),
+    },
+    gridBorder: {
+      borderBottom: "solid",
+    },
   })
 );
 
 const PhotoList: React.FC<{ id: string }> = ({ id }) => {
   const { data } = useSwr<List>(`/api/list/${id}`);
+  const classes = usePhotoListStyles();
   console.log(data);
   return (
-    <Grid xs={12} item container key={id}>
-      <Grid item xs={4}>
+    <Grid className={classes.gridBorder} xs={12} item container key={id}>
+      <Grid className={classes.photoListFormPadding} item xs={12}>
+        <UpdateListForm
+          id={id}
+          title={data && data.title ? data.title : "List title not found"}
+          description={data && data.description ? data.description : ""}
+        />
         <TextField
           label="title"
+          fullWidth
           value={data && data.title ? data.title : "List title not found"}
         />
+      </Grid>
+      <Grid className={classes.photoListFormPadding} item xs={12}>
         <TextField
           label="description"
+          variant="outlined"
           multiline
+          fullWidth
+          rows={4}
           value={data && data.description ? data.description : ""}
         />
-        <Button variant="contained">Update</Button>
       </Grid>
-      <Grid item xs={8}>
+      <Grid className={classes.photoListFormPadding} item xs={12}>
+        <Button fullWidth variant="contained">
+          Update
+        </Button>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md={8}
+        lg={8}
+        style={{
+          maxHeight: "500px",
+          overflowX: "hidden",
+          overflowY: "scroll",
+        }}
+      >
         {data && (
           <GridList cellHeight={"auto"}>
             {data.photos.map((photo) => {
@@ -94,7 +135,7 @@ export default function Index() {
           </Link>
         </Grid>
       </StickyHeader>
-      <Grid container spacing={3}>
+      <Grid className={classes.listContainer} container spacing={5}>
         {lists &&
           lists.map((list: ListPartial) => {
             return <PhotoList id={list.id} />;

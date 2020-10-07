@@ -3,7 +3,6 @@ import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import Grid from "@material-ui/core/Grid";
 import useSWR from "swr";
@@ -11,40 +10,11 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { Photo } from "../utils/types";
 import { PhotoSearchResultsGrid } from "../src/PhotoSearchResultsGrid";
+import { StickyHeader } from "../src/StickyHeader";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 const DEBOUNCE_INTERVAL = 1500;
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    stickySearch: {
-      position: "sticky",
-      top: 0,
-      backgroundColor: "white",
-      zIndex: 2,
-      height: "100px",
-      paddingTop: theme.spacing(2),
-    },
-  })
-);
-
-export const StickyHeader: React.FC<{
-  children: React.ReactNode;
-  justify: "space-evenly" | "space-between";
-}> = ({ children, justify }) => {
-  const classes = useStyles();
-  return (
-    <Grid
-      className={classes.stickySearch}
-      container
-      justify={justify}
-      alignItems="center"
-    >
-      {children}
-    </Grid>
-  );
-};
 
 export default function Index() {
   const [search, setSearch] = useState("");

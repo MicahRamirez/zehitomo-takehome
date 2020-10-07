@@ -2,11 +2,21 @@ import { NextApiRequest, NextApiResponse } from "next";
 import mongodb from "mongodb";
 
 import { connectToDatabase } from "../../../utils/mongodb";
-import { List } from "../../../utils/types";
+import { List, ListPATCHBody } from "../../../utils/types";
+
+const isListPATCHBody = (x: any): x is ListPATCHBody => {
+  return (
+    typeof x === "object" &&
+    (typeof x.title === "string" ||
+      typeof x.description === "string" ||
+      typeof x.photos === "object")
+  );
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     query: { id },
+    body,
     method,
   } = req;
 
@@ -17,9 +27,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .status(400)
           .json({ success: false, errorMessage: "Id must a string" });
       }
+
       // Update full list document or create new document in database
       const result = await getListById(id);
       return res.status(200).json(result);
+    }
+    case "PATCH": {
+      if (!isListPATCHBody(body) || Array.isArray(id)) {
+        console.log(isListPATCHBody(body));
+        console.log(Array.isArray(id));
+        return res.status(400).json({ success: false });
+      }
+      await updateListById(body, id);
+      return res.status(200).json({ success: true });
     }
     default:
       res.setHeader("Allow", ["GET"]);
@@ -31,7 +51,35 @@ export const getListById = async (id: string) => {
   const { db } = await connectToDatabase();
   const filter = { _id: new mongodb.ObjectID(id) };
   const result = await db.collection<List>("list").findOne(filter);
-  console.log(result);
+  return result;
+};
+
+export const updateListById = async (
+  listPATCHBody: ListPATCHBody,
+  id: string
+) => {
+  const { db } = await connectToDatabase();
+  const filter = { _id: new mongodb.ObjectID(id) };
+  let updateDocument: {
+    $set?: object;
+    $addToSet?: object;
+  } = {};
+
+  if (listPATCHBody.description) {
+    updateDocument["$set"] = {
+      description: listPATCHBody.description,
+    };
+  }
+  if (listPATCHBody.title) {
+    updateDocument["$set"] = {
+      ...updateDocument["$set"],
+      title: listPATCHBody.title,
+    };
+  }
+  if (listPATCHBody.photos) {
+    updateDocument.$addToSet = { photos: listPATCHBody.photos };
+  }
+  const result = await db.collection("list").updateOne(filter, updateDocument);
   return result;
 };
 

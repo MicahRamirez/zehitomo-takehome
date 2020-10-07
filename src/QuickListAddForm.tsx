@@ -54,8 +54,7 @@ export const QuickListAddForm: React.FC<{
       })}
       onSubmit={async (values) => {
         try {
-          await axios.patch("/api/list", {
-            id: values.listId,
+          await axios.patch(`/api/list/${values.listId}`, {
             photos: {
               id: photoId,
               photoUrls,

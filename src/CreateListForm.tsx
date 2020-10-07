@@ -108,6 +108,7 @@ export const CreateListForm: React.FC<{
             type="text"
             rows={4}
             label="List description"
+            variant="outlined"
             className={classes.textField}
           />
           <Button variant={"contained"} color={"primary"} onClick={submitForm}>
