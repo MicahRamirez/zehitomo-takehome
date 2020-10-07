@@ -13,6 +13,14 @@ import {
   setListInLocalStorage,
 } from "../utils/localStorage";
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    photoListFormPadding: {
+      padding: theme.spacing(4),
+    },
+  })
+);
+
 const ARBITRARY_TITLE_LENGTH = 26;
 const ARBITRARY_DESCRIPTION_LENGTH = 100;
 export const UpdateListForm: React.FC<{
@@ -21,6 +29,7 @@ export const UpdateListForm: React.FC<{
   description: List["description"];
 }> = ({ id, title, description }) => {
   const existingLists = getListTitlesFromLocalStorage();
+  const classes = useStyles();
   return (
     <Formik
       initialValues={{
@@ -74,27 +83,28 @@ export const UpdateListForm: React.FC<{
     >
       {({ submitForm }) => (
         <Grid container item xs={12} md={4} lg={4}>
-          <Grid item xs={12}>
+          <Grid className={classes.photoListFormPadding} item xs={12}>
             <Field
               component={TextField}
-              name="listTitle"
+              fullWidth
+              name="title"
               type="text"
-              label="List title"
+              label="Title"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid className={classes.photoListFormPadding} item xs={12}>
             <Field
               component={TextField}
               multiline
-              name="listDescription"
+              name="description"
               type="text"
               rows={4}
-              label="List description"
+              label="Description"
               variant="outlined"
               fullWidth
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid className={classes.photoListFormPadding} item xs={12}>
             <Button
               variant="contained"
               color="primary"

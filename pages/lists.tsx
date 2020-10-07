@@ -17,7 +17,6 @@ import {
 } from "../utils/localStorage";
 import { List } from "../utils/types";
 import { PhotoItem } from "../src/PhotoItem";
-import { UpdateListForm } from "../src/UpdateListForm";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,32 +49,29 @@ const PhotoList: React.FC<{ id: string }> = ({ id }) => {
   console.log(data);
   return (
     <Grid className={classes.gridBorder} xs={12} item container key={id}>
-      <Grid className={classes.photoListFormPadding} item xs={12}>
-        <UpdateListForm
-          id={id}
-          title={data && data.title ? data.title : "List title not found"}
-          description={data && data.description ? data.description : ""}
-        />
-        <TextField
-          label="title"
-          fullWidth
-          value={data && data.title ? data.title : "List title not found"}
-        />
-      </Grid>
-      <Grid className={classes.photoListFormPadding} item xs={12}>
-        <TextField
-          label="description"
-          variant="outlined"
-          multiline
-          fullWidth
-          rows={4}
-          value={data && data.description ? data.description : ""}
-        />
-      </Grid>
-      <Grid className={classes.photoListFormPadding} item xs={12}>
-        <Button fullWidth variant="contained">
-          Update
-        </Button>
+      <Grid container item xs={12} md={4} lg={4}>
+        <Grid className={classes.photoListFormPadding} item xs={12}>
+          <TextField
+            label="title"
+            fullWidth
+            value={data && data.title ? data.title : "List title not found"}
+          />
+        </Grid>
+        <Grid className={classes.photoListFormPadding} item xs={12}>
+          <TextField
+            label="description"
+            variant="outlined"
+            multiline
+            fullWidth
+            rows={4}
+            value={data && data.description ? data.description : ""}
+          />
+        </Grid>
+        <Grid className={classes.photoListFormPadding} item xs={12}>
+          <Button fullWidth variant="contained">
+            Update
+          </Button>
+        </Grid>
       </Grid>
       <Grid
         item
