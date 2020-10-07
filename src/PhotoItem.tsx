@@ -1,18 +1,10 @@
 import React, { useState } from "react";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Modal from "@material-ui/core/Modal";
-import Paper from "@material-ui/core/Paper";
-import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 import { Photo } from "../utils/types";
 import { PhotoActions } from "./PhotoActions";
 import { PhotoUserInformation } from "./PhotoUserInformation";
-import { CreateListForm } from "./CreateListForm";
+import { ListModal } from "./ListModal";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -27,61 +19,6 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-
-const useModalStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    modal: {
-      marginTop: theme.spacing(2),
-    },
-    imageContainer: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      padding: theme.spacing(3),
-    },
-    image: {
-      marginBottom: theme.spacing(),
-      borderRadius: theme.spacing(),
-    },
-  })
-);
-
-const ListModal: React.FC<{
-  open: boolean;
-  onClose: () => void;
-  photoUrls: Photo["photoUrls"];
-  photoId: Photo["id"];
-}> = ({ open, onClose, photoUrls, photoId }) => {
-  const [listName, setListName] = useState("");
-  const [listDescription, setListDescription] = useState("");
-  const classes = useModalStyles();
-  return (
-    <Modal open={open} onClose={onClose} className={classes.modal}>
-      <Container maxWidth={"sm"} disableGutters>
-        <Paper>
-          <div className={classes.imageContainer}>
-            <img className={classes.image} src={photoUrls.small} />
-            <Typography variant="h5" component="h6">
-              Adding to favorites
-            </Typography>
-          </div>
-
-          <Divider />
-          <List>
-            <ListItem>
-              <ListItemText
-                primary="Special Photo List"
-                secondary={"this is the best list"}
-              />
-            </ListItem>
-          </List>
-          <Divider />
-          <CreateListForm photoUrls={photoUrls} photoId={photoId} />
-        </Paper>
-      </Container>
-    </Modal>
-  );
-};
 
 export const PhotoItem: React.FC<Photo> = ({
   id,

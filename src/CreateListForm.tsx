@@ -3,10 +3,16 @@ import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import axios from "axios";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import * as Yup from "yup";
 
 import { Photo } from "../utils/types";
+import {
+  getListTitlesFromLocalStorage,
+  setListInLocalStorage,
+} from "../utils/localStorage";
+import { PutResponse } from "../pages/api/list";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,17 +27,19 @@ const useStyles = makeStyles((theme: Theme) =>
     textField: {
       marginBottom: theme.spacing(2),
     },
-    submitButton: {},
   })
 );
 
 const ARBITRARY_TITLE_LENGTH = 26;
-const ARBITRARY_DESCRIPTION_LENGTH = 250;
+const ARBITRARY_DESCRIPTION_LENGTH = 100;
 export const CreateListForm: React.FC<{
   photoId: Photo["id"];
   photoUrls: Photo["photoUrls"];
-}> = ({ photoId, photoUrls }) => {
+  onClose: () => void;
+}> = ({ photoId, photoUrls, onClose }) => {
   const classes = useStyles();
+  const existingLists = getListTitlesFromLocalStorage();
+  console.log(existingLists);
   return (
     <Formik
       initialValues={{
@@ -44,6 +52,15 @@ export const CreateListForm: React.FC<{
             ARBITRARY_TITLE_LENGTH,
             `List title must be ${ARBITRARY_TITLE_LENGTH} characters or less`
           )
+          .test("no-duplicate-lists", "This list already exists", (value) => {
+            if (!value) {
+              return true;
+            }
+            // when creating lists the listTitle should not already exist
+            // the BE should be responsible for preventing dupes but running low on time
+            return existingLists.findIndex((arrVal) => arrVal === value) === -1;
+          })
+          .trim()
           .required("Required"),
         listDescription: Yup.string().max(
           ARBITRARY_DESCRIPTION_LENGTH,
@@ -51,9 +68,25 @@ export const CreateListForm: React.FC<{
         ),
       })}
       onSubmit={async (values) => {
-        console.log("submitting");
-        console.log(photoId, photoUrls);
-        console.log(values);
+        let response;
+        try {
+          response = await axios.put<PutResponse>("/api/list", {
+            title: values.listTitle,
+            description: values.listDescription,
+            photos: [{ id: photoId, photoUrls: photoUrls }],
+          });
+        } catch (error) {
+          console.warn("Unable to create list");
+          // do error handling
+        }
+        if (response && response.data) {
+          setListInLocalStorage({
+            id: response.data.id,
+            title: values.listTitle,
+            description: values.listDescription,
+          });
+          onClose();
+        }
       }}
     >
       {({ submitForm }) => (

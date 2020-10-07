@@ -70,7 +70,7 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
         currentRow = [];
       }
       currentRow.push(
-        <Grid key={`item_${childIndex}`} item xs={3}>
+        <Grid key={`item_${childIndex}`} item xs={12} sm={6} lg={3}>
           {children[childIndex]}
         </Grid>
       );

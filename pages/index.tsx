@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
+import StarIcon from "@material-ui/icons/Star";
 import Grid from "@material-ui/core/Grid";
 import useSWR from "swr";
 import unfetch from "unfetch";
@@ -17,12 +18,12 @@ const DEBOUNCE_INTERVAL = 1500;
 const useStyles = makeStyles(() =>
   createStyles({
     stickySearch: {
-      position: "fixed",
+      position: "sticky",
       top: 0,
-      marginTop: "20px",
-    },
-    photoContainer: {
-      marginTop: "90px",
+      backgroundColor: "white",
+      zIndex: 2,
+      height: "100px",
+      paddingTop: "20px",
     },
   })
 );
@@ -51,22 +52,25 @@ export default function Index() {
   console.log(data);
   return (
     <>
-      <Grid className={classes.stickySearch} container justify="center">
-        <Grid item xs={8}>
-          <TextField
-            label={"Search photos"}
-            fullWidth
-            value={search}
-            placeholder={"Type to get started!"}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setIsSearching(true);
-              debounced.callback(e.target.value);
-            }}
-          />
+      <Container>
+        <Grid className={classes.stickySearch} container justify="center">
+          <Grid item xs={8}>
+            <TextField
+              label={"Search photos"}
+              fullWidth
+              value={search}
+              placeholder={"Type to get started!"}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setIsSearching(true);
+                debounced.callback(e.target.value);
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <StarIcon />
+          </Grid>
         </Grid>
-      </Grid>
-      <Container className={classes.photoContainer}>
         <PhotoSearchResultsGrid
           showSkeleton={isSearching}
           photoData={searchResults}

@@ -33,7 +33,7 @@ const transformSearchResultsToPhotoList = (
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
-  // requests are limited to 50 per hour, need a way to work with the data without killing my budget;
+  // requests are limited to 50 per hour, need a way to work with the data without killing the budget;
   if (req.method === "GET" && UNSPLASH_IS_MOCK) {
     return res
       .status(200)
@@ -47,16 +47,13 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
     } else if (typeof page === "string") {
       pageNumber = parseInt(page);
     }
-    if (Array.isArray(keyword)) {
-      console.log("isError");
-    } else {
-      unsplash.search
+    if (!Array.isArray(keyword)) {
+      return unsplash.search
         .photos(keyword, pageNumber, 30, {
           orientation: "squarish" as any,
         })
         .then(toJson)
         .then((json) => {
-          console.log("result", json);
           return res
             .status(200)
             .json({ data: transformSearchResultsToPhotoList(json) });
