@@ -20,13 +20,24 @@ const useStyles = makeStyles(() =>
   })
 );
 
-export const PhotoItem: React.FC<Photo> = ({
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+export const PhotoItem: React.FC<
+  WithOptional<
+    Photo,
+    | "associatedUserImageURL"
+    | "associatedUsername"
+    | "associatedUserProfileURL"
+    | "downloadURL"
+  > & { enabledActions?: { download?: boolean; favorite?: boolean } }
+> = ({
   id,
   photoUrls,
-  downloadURL,
   associatedUserImageURL,
   associatedUsername,
   associatedUserProfileURL,
+  enabledActions,
 }) => {
   const [isMousedOver, setIsMousedOver] = useState(false);
   const [addToList, setAddToList] = useState(false);
@@ -40,16 +51,25 @@ export const PhotoItem: React.FC<Photo> = ({
       <PhotoActions
         showActions={isMousedOver || addToList}
         id={id}
-        downloadURL={downloadURL}
+        downloadURL={photoUrls.regular}
         setAddToList={setAddToList}
+        enabledActions={enabledActions}
       />
-      <img key={id} src={photoUrls.small} className={classes.imageTag} />
-      <PhotoUserInformation
-        showUserInformation={isMousedOver || addToList}
-        userName={associatedUsername}
-        profilePicture={associatedUserImageURL}
-        profileURL={associatedUserProfileURL}
+      <img
+        key={id}
+        src={`${photoUrls.regular}&w=300&h=300`}
+        className={classes.imageTag}
       />
+      {associatedUsername !== undefined &&
+        associatedUserImageURL !== undefined &&
+        associatedUserProfileURL !== undefined && (
+          <PhotoUserInformation
+            showUserInformation={isMousedOver || addToList}
+            userName={associatedUsername}
+            profilePicture={associatedUserImageURL}
+            profileURL={associatedUserProfileURL}
+          />
+        )}
       <ListModal
         photoUrls={photoUrls}
         open={addToList}

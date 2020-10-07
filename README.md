@@ -33,7 +33,6 @@
 1. A docker compose recipe to pull up the project quickly so that devs don't have to rely on local settings/configuration
 2. Input validation for the image search. What constitutes a valid input for the search though? I thought searching for full english words would be a good start. There was at least one npm package that had a few language supported out of the box, but that validation would need to happen on the BE since the lib was 35MB+.
 3. Increasing the limit on the API. 50 requests PER HOUR is NOTHING. In order to do increase the limit, I'd need to utilize the download endpoint for the photos as the user interacts with the photos in various ways https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
-4.
 
 ### What to fix
 
@@ -45,3 +44,4 @@
 6. Get rid of axios... It was munging the image buffer from the BE. For awhile I couldn't download the images properly solely because this library.
 7. Include the downloadUrl when saving photos on the List data model.
 8. Invoke the downloadUrl when saving photos
+9. Use unsplash hotlink query params to properly size images as they are rendered on the page

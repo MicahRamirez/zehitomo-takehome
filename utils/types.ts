@@ -43,3 +43,28 @@ export interface RawSearch {
   total_pages: number;
   results: RawPhoto[];
 }
+
+type PhotoSubset = Pick<Photo, "id" | "photoUrls">;
+export interface ListPUTBody {
+  title: string;
+  description: string;
+  photos: PhotoSubset[];
+}
+
+export interface ListPOSTBody {
+  listIds: string[];
+}
+
+export interface ListPATCHBody {
+  id: string;
+  title?: List["title"];
+  description?: List["description"];
+  photos?: List["photos"];
+}
+
+export interface List {
+  id: string;
+  title: string;
+  description: string;
+  photos: PhotoSubset[];
+}

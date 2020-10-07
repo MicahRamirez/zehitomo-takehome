@@ -4,10 +4,10 @@ import { Select } from "formik-material-ui";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import * as Yup from "yup";
+import axios from "axios";
 
 import { Photo } from "../utils/types";
 import { getListObjectFromLocalStorage } from "../utils/localStorage";
@@ -39,9 +39,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export const QuickListAddForm: React.FC<{
   photoId: Photo["id"];
   photoUrls: Photo["photoUrls"];
-}> = () => {
+  onClose: () => void;
+}> = ({ photoId, photoUrls, onClose }) => {
   const classes = useStyles();
   const lists = Object.values(getListObjectFromLocalStorage());
+
   return (
     <Formik
       initialValues={{
@@ -51,8 +53,18 @@ export const QuickListAddForm: React.FC<{
         listId: Yup.string().required("Required"),
       })}
       onSubmit={async (values) => {
-        console.log("submitting");
-        console.log(values);
+        try {
+          await axios.patch("/api/list", {
+            id: values.listId,
+            photos: {
+              id: photoId,
+              photoUrls,
+            },
+          });
+        } catch (error) {
+          console.error("unable to patch list");
+        }
+        onClose();
       }}
     >
       {({ submitForm }) => (

@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
-import StarIcon from "@material-ui/icons/Star";
+import Button from "@material-ui/core/Button";
+import Link from "next/link";
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import Grid from "@material-ui/core/Grid";
 import useSWR from "swr";
-import unfetch from "unfetch";
 import { useDebouncedCallback } from "use-debounce";
 
 import { Photo } from "../utils/types";
 import { PhotoSearchResultsGrid } from "../src/PhotoSearchResultsGrid";
 
-const fetcher = (url: string) => unfetch(url).then((r) => r.json());
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 const DEBOUNCE_INTERVAL = 1500;
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     stickySearch: {
       position: "sticky",
@@ -23,13 +24,29 @@ const useStyles = makeStyles(() =>
       backgroundColor: "white",
       zIndex: 2,
       height: "100px",
-      paddingTop: "20px",
+      paddingTop: theme.spacing(2),
     },
   })
 );
 
-export default function Index() {
+export const StickyHeader: React.FC<{
+  children: React.ReactNode;
+  justify: "space-evenly" | "space-between";
+}> = ({ children, justify }) => {
   const classes = useStyles();
+  return (
+    <Grid
+      className={classes.stickySearch}
+      container
+      justify={justify}
+      alignItems="center"
+    >
+      {children}
+    </Grid>
+  );
+};
+
+export default function Index() {
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -37,7 +54,7 @@ export default function Index() {
   const debounced = useDebouncedCallback((value: string) => {
     setSearchDebounced(value);
   }, DEBOUNCE_INTERVAL);
-  const { data } = useSWR<{ data: Photo[] }>(
+  useSWR<{ data: Photo[] }>(
     searchDebounced.length > 0
       ? `/api/search?keyword=${searchDebounced}`
       : null,
@@ -49,28 +66,37 @@ export default function Index() {
       },
     }
   );
-  console.log(data);
   return (
     <>
-      <Container>
-        <Grid className={classes.stickySearch} container justify="center">
-          <Grid item xs={8}>
-            <TextField
-              label={"Search photos"}
-              fullWidth
-              value={search}
-              placeholder={"Type to get started!"}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setIsSearching(true);
-                debounced.callback(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <StarIcon />
-          </Grid>
+      <StickyHeader justify={"space-evenly"}>
+        <Grid item xs={8}>
+          <TextField
+            label={"Search photos"}
+            fullWidth
+            value={search}
+            placeholder={"Type to get started!"}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setIsSearching(true);
+              debounced.callback(e.target.value);
+            }}
+          />
         </Grid>
+        <Grid item>
+          <Link href="/lists">
+            <Button
+              variant="outlined"
+              color="primary"
+              endIcon={<FavoriteBorderIcon />}
+            >
+              {" "}
+              Lists{" "}
+            </Button>
+          </Link>
+        </Grid>
+      </StickyHeader>
+
+      <Container>
         <PhotoSearchResultsGrid
           showSkeleton={isSearching}
           photoData={searchResults}

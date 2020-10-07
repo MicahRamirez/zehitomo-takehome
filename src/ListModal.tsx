@@ -44,7 +44,11 @@ export const ListModal: React.FC<{
           </div>
 
           <Divider />
-          <QuickListAddForm photoId={photoId} photoUrls={photoUrls} />
+          <QuickListAddForm
+            photoId={photoId}
+            photoUrls={photoUrls}
+            onClose={onClose}
+          />
           <Divider />
           <CreateListForm
             photoUrls={photoUrls}

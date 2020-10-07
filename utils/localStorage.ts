@@ -3,7 +3,7 @@ import { List } from "../utils/types";
 interface LocalStorageLists {
   [x: string]: ListPartial;
 }
-type ListPartial = Pick<List, "id" | "title" | "description">;
+export type ListPartial = Pick<List, "id" | "title" | "description">;
 const LIST_LOCALSTORAGE_KEY = "lists";
 export const getListObjectFromLocalStorage = (): LocalStorageLists => {
   let listsFromLocalStorage = localStorage.getItem(LIST_LOCALSTORAGE_KEY);

@@ -47,54 +47,25 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const classes = useStyles();
-  // given some amount of children(pictures and or skeletons) create a grid where each row has 4 elements.
-  // TODO: probably a better way to do this
-  const makeColumnsAndRows = (children: React.ReactNode[]) => {
-    const formattedChildren = [];
-    let currentRow: React.ReactNode[] = [];
-
-    for (let childIndex = 0; childIndex < children.length; childIndex++) {
-      if (childIndex % 4 === 0 && childIndex > 0) {
-        formattedChildren.push(
-          <Grid
-            key={`row_${Math.floor(childIndex / 4)}`}
-            container
-            item
-            xs={12}
-            spacing={2}
-            className={classes.gridRow}
-          >
-            {currentRow}
-          </Grid>
-        );
-        currentRow = [];
-      }
-      currentRow.push(
-        <Grid key={`item_${childIndex}`} item xs={12} sm={6} lg={3}>
-          {children[childIndex]}
-        </Grid>
-      );
-    }
-    // when the number of children is not divisible by 4 we'll have to add the remaining row
-    if (currentRow.length > 0) {
-      formattedChildren.push(
-        <Grid
-          key={"row_last"}
-          container
-          item
-          xs={12}
-          spacing={2}
-          className={classes.gridRow}
-        >
-          {currentRow}
-        </Grid>
-      );
-    }
-    return formattedChildren;
-  };
   return (
     <Grid container spacing={2}>
-      {Array.isArray(children) && makeColumnsAndRows(children)}
+      {Array.isArray(children) &&
+        children.map((child, i) => {
+          return (
+            <Grid
+              key={i}
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              spacing={2}
+              className={classes.gridRow}
+            >
+              {child}
+            </Grid>
+          );
+        })}
     </Grid>
   );
 };

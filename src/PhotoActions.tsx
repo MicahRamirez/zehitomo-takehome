@@ -31,7 +31,14 @@ export const PhotoActions: React.FC<{
   downloadURL: string;
   showActions: boolean;
   setAddToList: (isAddingToList: boolean) => void;
-}> = ({ id, downloadURL, showActions, setAddToList }) => {
+  enabledActions?: { download?: boolean; favorite?: boolean };
+}> = ({
+  id,
+  downloadURL,
+  showActions,
+  setAddToList,
+  enabledActions = { download: true, favorite: true },
+}) => {
   const [downloadingImage, setDownloadingImage] = useState(false);
   const [downloadOnHover, setDownloadOnHover] = useState(false);
   const [favoriteOnHover, setFavoriteOnHover] = useState(false);
@@ -69,25 +76,29 @@ export const PhotoActions: React.FC<{
     <>
       <div className={classes.photoActionsDiv}>
         <div style={{ display: "flex" }}>
-          <rect className={classes.rectStrokeColor}>
-            <GetAppIcon
-              onClick={downloadImage}
-              className={classes.downloadImage}
-              titleAccess={"download image"}
-              color={downloadOnHover ? "primary" : "secondary"}
-              onMouseEnter={() => setDownloadOnHover(true)}
-              onMouseLeave={() => setDownloadOnHover(false)}
-            />
-          </rect>
-          <rect className={classes.rectStrokeColor}>
-            <FavoriteIcon
-              onClick={() => setAddToList(true)}
-              className={classes.favoriteImage}
-              color={favoriteOnHover ? "primary" : "secondary"}
-              onMouseEnter={() => setFavoriteOnHover(true)}
-              onMouseLeave={() => setFavoriteOnHover(false)}
-            />
-          </rect>
+          {enabledActions.download && (
+            <rect className={classes.rectStrokeColor}>
+              <GetAppIcon
+                onClick={downloadImage}
+                className={classes.downloadImage}
+                titleAccess={"download image"}
+                color={downloadOnHover ? "primary" : "secondary"}
+                onMouseEnter={() => setDownloadOnHover(true)}
+                onMouseLeave={() => setDownloadOnHover(false)}
+              />
+            </rect>
+          )}
+          {enabledActions.favorite && (
+            <rect className={classes.rectStrokeColor}>
+              <FavoriteIcon
+                onClick={() => setAddToList(true)}
+                className={classes.favoriteImage}
+                color={favoriteOnHover ? "primary" : "secondary"}
+                onMouseEnter={() => setFavoriteOnHover(true)}
+                onMouseLeave={() => setFavoriteOnHover(false)}
+              />
+            </rect>
+          )}
         </div>
       </div>
     </>

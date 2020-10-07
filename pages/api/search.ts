@@ -56,7 +56,11 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
         .then((json) => {
           return res
             .status(200)
-            .json({ data: transformSearchResultsToPhotoList(json) });
+            .json({
+              data: transformSearchResultsToPhotoList(json),
+              total: json.total,
+              totalPages: json.total_pages,
+            });
         })
         .catch((err) => {
           console.log(err);
