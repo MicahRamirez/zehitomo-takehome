@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body } = req;
   const imageURL = body.imageURL;
   const fileName = body.photoId;
-  const imagePath = `images_tmp/${fileName}.jpeg`;
+  const imagePath = path.resolve(process.cwd(), `${fileName}.jpeg`);
   await axios({
     url: imageURL,
     responseType: "stream",
