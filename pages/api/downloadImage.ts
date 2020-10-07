@@ -1,6 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import fs from "fs";
-import path from "path";
 import axios from "axios";
 
 // unsplash does not seem to give a fe app a good way to download a photo
@@ -10,8 +8,6 @@ import axios from "axios";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body } = req;
   const imageURL = body.imageURL;
-  const fileName = body.photoId;
-  const imagePath = path.resolve(process.cwd(), `${fileName}.jpeg`);
   await axios({
     url: imageURL,
     responseType: "stream",
