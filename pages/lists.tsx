@@ -33,33 +33,37 @@ const PhotoList: React.FC<{ id: string }> = ({ id }) => {
   const { data } = useSwr<List>(`/api/list/${id}`);
   console.log(data);
   return (
-    <div>
-      <TextField
-        label="title"
-        value={data && data.title ? data.title : "List title not found"}
-      />
-      <TextField
-        label="description"
-        multiline
-        value={data && data.description ? data.description : ""}
-      />
-      <Button variant="contained">Update</Button>
-      {data && (
-        <GridList cellHeight={"auto"}>
-          {data.photos.map((photo) => {
-            return (
-              <GridListTile key={photo.id}>
-                <PhotoItem
-                  id={photo.id}
-                  photoUrls={photo.photoUrls}
-                  enabledActions={{ download: true }}
-                />
-              </GridListTile>
-            );
-          })}
-        </GridList>
-      )}
-    </div>
+    <Grid xs={12} item container key={id}>
+      <Grid item xs={4}>
+        <TextField
+          label="title"
+          value={data && data.title ? data.title : "List title not found"}
+        />
+        <TextField
+          label="description"
+          multiline
+          value={data && data.description ? data.description : ""}
+        />
+        <Button variant="contained">Update</Button>
+      </Grid>
+      <Grid item xs={8}>
+        {data && (
+          <GridList cellHeight={"auto"}>
+            {data.photos.map((photo) => {
+              return (
+                <GridListTile key={photo.id}>
+                  <PhotoItem
+                    id={photo.id}
+                    photoUrls={photo.photoUrls}
+                    enabledActions={{ download: true }}
+                  />
+                </GridListTile>
+              );
+            })}
+          </GridList>
+        )}
+      </Grid>
+    </Grid>
   );
 };
 
@@ -90,14 +94,10 @@ export default function Index() {
           </Link>
         </Grid>
       </StickyHeader>
-      <Grid item container xs={12} spacing={3}>
+      <Grid container spacing={3}>
         {lists &&
           lists.map((list: ListPartial) => {
-            return (
-              <Grid key={list.id} item xs={12} sm={6} md={4} lg={3}>
-                <PhotoList id={list.id} />
-              </Grid>
-            );
+            return <PhotoList id={list.id} />;
           })}
       </Grid>
     </Grid>

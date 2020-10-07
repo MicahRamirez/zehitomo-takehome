@@ -59,7 +59,6 @@ const PhotoDisplayGrid: React.FC<{ children: React.ReactNode }> = ({
               sm={6}
               md={4}
               lg={3}
-              spacing={2}
               className={classes.gridRow}
             >
               {child}

@@ -20,6 +20,8 @@ const useStyles = makeStyles(() =>
   })
 );
 
+// Only need the associatedUser information on the search page, excluding it on lists for simplicity sake
+// https://github.com/Microsoft/TypeScript/issues/25760
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -57,7 +59,7 @@ export const PhotoItem: React.FC<
       />
       <img
         key={id}
-        src={`${photoUrls.regular}&w=300&h=300`}
+        src={`${photoUrls.regular}&w=200&h=200`}
         className={classes.imageTag}
       />
       {associatedUsername !== undefined &&
