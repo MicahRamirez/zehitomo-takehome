@@ -9,17 +9,22 @@ import { List } from "../utils/types";
 import { PhotoItem } from "../src/PhotoItem";
 import { UpdateListForm } from "../src/UpdateListForm";
 
-const usePhotoListStyles = makeStyles(() =>
+const useStyles = makeStyles(() =>
   createStyles({
     gridBorder: {
       borderBottom: "solid",
+    },
+    photoGrid: {
+      maxHeight: "500px",
+      overflowX: "hidden",
+      overflowY: "scroll",
     },
   })
 );
 
 export const PhotoList: React.FC<{ id: string }> = ({ id }) => {
   const { data } = useSwr<List>(`/api/list/${id}`);
-  const classes = usePhotoListStyles();
+  const classes = useStyles();
   return (
     <>
       {data && (
@@ -30,17 +35,7 @@ export const PhotoList: React.FC<{ id: string }> = ({ id }) => {
             description={data && data.description ? data.description : ""}
             photos={data && data.photos ? data.photos : []}
           />
-          <Grid
-            item
-            xs={12}
-            md={8}
-            lg={8}
-            style={{
-              maxHeight: "500px",
-              overflowX: "hidden",
-              overflowY: "scroll",
-            }}
-          >
+          <Grid item xs={12} md={8} lg={8} className={classes.photoGrid}>
             {data && (
               <GridList cellHeight={"auto"}>
                 {data.photos.map((photo) => {

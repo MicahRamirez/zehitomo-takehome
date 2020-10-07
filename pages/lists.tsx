@@ -4,19 +4,14 @@ import SearchIcon from "@material-ui/icons/Search";
 import Button from "@material-ui/core/Button";
 import Link from "next/link";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
 import Grid from "@material-ui/core/Grid";
-import useSwr from "swr";
 
 import { StickyHeader } from "../src/StickyHeader";
 import {
   getListObjectFromLocalStorage,
   ListPartial,
 } from "../utils/localStorage";
-import { List } from "../utils/types";
-import { PhotoItem } from "../src/PhotoItem";
-import { UpdateListForm } from "../src/UpdateListForm";
+import { PhotoList } from "../src/PhotoList";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,63 +26,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-const usePhotoListStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    photoListFormPadding: {
-      padding: theme.spacing(4),
-    },
-    gridBorder: {
-      borderBottom: "solid",
-    },
-  })
-);
-
-const PhotoList: React.FC<{ id: string }> = ({ id }) => {
-  const { data } = useSwr<List>(`/api/list/${id}`);
-  const classes = usePhotoListStyles();
-  return (
-    <>
-      {data && (
-        <Grid className={classes.gridBorder} xs={12} item container key={id}>
-          <UpdateListForm
-            id={id}
-            title={data && data.title ? data.title : ""}
-            description={data && data.description ? data.description : ""}
-            photos={data && data.photos ? data.photos : []}
-          />
-          <Grid
-            item
-            xs={12}
-            md={8}
-            lg={8}
-            style={{
-              maxHeight: "500px",
-              overflowX: "hidden",
-              overflowY: "scroll",
-            }}
-          >
-            {data && (
-              <GridList cellHeight={"auto"}>
-                {data.photos.map((photo) => {
-                  return (
-                    <GridListTile key={photo.id}>
-                      <PhotoItem
-                        id={photo.id}
-                        photoUrls={photo.photoUrls}
-                        enabledActions={{ download: true }}
-                      />
-                    </GridListTile>
-                  );
-                })}
-              </GridList>
-            )}
-          </Grid>
-        </Grid>
-      )}{" "}
-    </>
-  );
-};
 
 export default function Index() {
   const [lists, setLists] = useState<ListPartial[]>();
