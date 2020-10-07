@@ -15,6 +15,12 @@
 - Used material-ui design library as its fairly easy to customize and had components to fit the requirements of the UI.
 - Used formik & yup to quickly create forms with basic form requirements
 
+## Specific software design decisions
+
+- Decided to simplify the photo model from unplash because it would be quicker to iterate on the frontend.
+- `A user has lists` User session represented by local storage session. If more time was allocated the list model would live in a user model. A user has lists (of liked photos).
+- `A list has photos` A list has references to photos via saving the ID. To save time and extra api work, auxillary photo data was saved to the list to collection. In a world with a less strict API request limit, unsplash should be the source of truth for that photo information and list only keeps the reference id IMO.
+
 ## Specific design decisions
 
 - Scrollable grid, has an instagram/unsplash-like feel
